@@ -108,6 +108,7 @@ public class DecryptUtils {
 		int dataLength = cipheredContent.length - 588;
 		byte[] encryptedData = new byte[dataLength];
 		bais.read(encryptedData, 0, dataLength);
+		printByteArray("DADOS FECHADOS: ", encryptedData);
 		System.out.println("Área de Dados: " + dataLength + " byte(s).");
 		System.out.println(String.format("Multiplo de 8? %s", dataLength % 8 == 0));
 		
