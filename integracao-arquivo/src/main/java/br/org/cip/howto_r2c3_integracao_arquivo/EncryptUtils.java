@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -26,13 +27,11 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
 
-import javax.crypto.Cipher;
-import javax.crypto.CipherOutputStream;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
+import javax.crypto.*;
+import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 
 public class EncryptUtils {
@@ -171,10 +170,19 @@ public class EncryptUtils {
 		return signature.sign();
 	}
 
-	private static Key generateSecretKey() throws NoSuchAlgorithmException {
-		KeyGenerator generator = KeyGenerator.getInstance("DESede");
-		generator.init(SecureRandom.getInstance("SHA1PRNG"));
-		return generator.generateKey();
+	private static Key generateSecretKey() throws NoSuchAlgorithmException{
+		try {
+			String myEncryptionKey = "ThisIsSpartaThisIsSparta";
+			byte[] arrayBytes = myEncryptionKey.getBytes(StandardCharsets.UTF_8);
+			DESedeKeySpec ks = new DESedeKeySpec(arrayBytes);
+			SecretKeyFactory skf = SecretKeyFactory.getInstance("DESede");
+			SecretKey key = skf.generateSecret(ks);
+			return key;
+		} catch (InvalidKeyException ex ) {
+			throw new IllegalArgumentException("Chave inválida");
+		} catch (InvalidKeySpecException e) {
+			throw new IllegalArgumentException("Tipo de chave inválida");
+		}
 	}
 
 	private static byte[] cipherKey(Key secretKey, X509Certificate destCert, int keySize)

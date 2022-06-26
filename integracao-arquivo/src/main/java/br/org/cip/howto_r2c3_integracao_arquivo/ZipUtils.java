@@ -45,6 +45,7 @@ public class ZipUtils {
         if(paddingLength != 0) {
         	try(java.io.RandomAccessFile randomAccessFile = new java.io.RandomAccessFile(targetFilepath,"rw")) {
         		//JVM completa com zeros ao final do arquivo quando se estabelece o tamanho do arquivo
+                System.out.println("Completou o arquivo com "+paddingLength+ " bytes");
         		randomAccessFile.setLength(fileLengthBeforePadding + paddingLength);
         	}
         }
